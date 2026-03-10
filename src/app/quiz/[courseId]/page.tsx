@@ -48,7 +48,15 @@ export default function QuizPage({ params }: { params: Promise<{ courseId: strin
     setSelectedAnswer(answer);
     const correct = answer === words[currentIndex].word; // 단어(word)와 비교
     setIsCorrect(correct);
-    if (correct) setScore(score + 1);
+    if (correct) {
+      setScore(score + 1);
+    } else {
+      // 오답일 경우 복습 리스트에 추가
+      const wrong = JSON.parse(localStorage.getItem('wordflow_wrong_words') || '[]');
+      if (!wrong.includes(words[currentIndex].id)) {
+        localStorage.setItem('wordflow_wrong_words', JSON.stringify([...wrong, words[currentIndex].id]));
+      }
+    }
 
     setTimeout(() => {
       if (currentIndex < words.length - 1) {

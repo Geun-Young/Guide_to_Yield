@@ -50,6 +50,12 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
     setIsCorrect(correct);
     if (correct) {
       setHintLevel(2); // 정답 맞추면 정답 상태로
+    } else {
+      // 오답일 경우 복습 리스트에 추가
+      const wrong = JSON.parse(localStorage.getItem('wordflow_wrong_words') || '[]');
+      if (!wrong.includes(currentWord.id)) {
+        localStorage.setItem('wordflow_wrong_words', JSON.stringify([...wrong, currentWord.id]));
+      }
     }
   };
 
