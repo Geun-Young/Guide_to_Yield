@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* WordFlow Custom Colors */
+  --primary: #4f46e5;       /* Indigo-600 */
+  --primary-dark: #4338ca;  /* Indigo-700 */
+  --secondary: #a78bfa;     /* Violet-400 */
+  
+  /* Pastel Palette */
+  --pastel-blue: #e0f2fe;
+  --pastel-green: #dcfce7;
+  --pastel-yellow: #fef9c3;
+  --pastel-red: #fee2e2;
+  --pastel-purple: #f3e8ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  /* 커스텀 테마 변수 연결 */
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  
+  --color-pastel-blue: var(--pastel-blue);
+  --color-pastel-green: var(--pastel-green);
+  --color-pastel-yellow: var(--pastel-yellow);
+  --color-pastel-red: var(--pastel-red);
+  --color-pastel-purple: var(--pastel-purple);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}

@@ -1,0 +1,36 @@
+{
+  "toeic_course": [
+    { "id": "t1", "word": "Compromise", "meaning": "타협하다, 절충하다", "example": "We need to find a way to ________ on this issue.", "blank_answer": "compromise", "source": "TOEIC Part 5", "difficulty": "Medium" },
+    { "id": "t2", "word": "Incentive", "meaning": "장려금, 보상물", "example": "The company offers a financial ________ to employees.", "blank_answer": "incentive", "source": "TOEIC Vocabulary", "difficulty": "Hard" },
+    { "id": "t3", "word": "Mandatory", "meaning": "의무적인, 필수의", "example": "Attendance is ________ for all staff.", "blank_answer": "mandatory", "source": "TOEIC Part 6", "difficulty": "Medium" },
+    { "id": "t4", "word": "Prospective", "meaning": "유망한, 장래의", "example": "We are interviewing ________ candidates.", "blank_answer": "prospective", "source": "TOEIC Vocabulary", "difficulty": "Hard" },
+    { "id": "t5", "word": "Strive", "meaning": "노력하다, 애쓰다", "example": "We ________ to provide the best service.", "blank_answer": "strive", "source": "TOEIC Part 5", "difficulty": "Easy" },
+    { "id": "t6", "word": "Versatile", "meaning": "다재다능한, 다용도의", "example": "This tool is very ________ and can be used for many tasks.", "blank_answer": "versatile", "source": "TOEIC Vocabulary", "difficulty": "Medium" },
+    { "id": "t7", "word": "Compliance", "meaning": "준수, 따름", "example": "The factory is in full ________ with safety rules.", "blank_answer": "compliance", "source": "TOEIC Part 6", "difficulty": "Hard" },
+    { "id": "t8", "word": "Acquire", "meaning": "획득하다, 습득하다", "example": "They plan to ________ a smaller company next year.", "blank_answer": "acquire", "source": "TOEIC Business", "difficulty": "Medium" },
+    { "id": "t9", "word": "Sufficient", "meaning": "충분한", "example": "Do we have ________ evidence to support the claim?", "blank_answer": "sufficient", "source": "TOEIC Part 5", "difficulty": "Easy" },
+    { "id": "t10", "word": "Implementation", "meaning": "이행, 실행", "example": "The ________ of the new system took three months.", "blank_answer": "implementation", "source": "TOEIC Part 6", "difficulty": "Hard" },
+    { "id": "t11", "word": "Reliable", "meaning": "신뢰할 수 있는", "example": "We need a ________ person to manage the office.", "blank_answer": "reliable", "source": "TOEIC Vocabulary", "difficulty": "Easy" },
+    { "id": "t12", "word": "Contribute", "meaning": "기여하다, 공헌하다", "example": "Employees are encouraged to ________ ideas.", "blank_answer": "contribute", "source": "TOEIC Part 5", "difficulty": "Medium" },
+    { "id": "t13", "word": "Feasible", "meaning": "실행 가능한", "example": "The project is not economically ________.", "blank_answer": "feasible", "source": "TOEIC Part 7", "difficulty": "Hard" },
+    { "id": "t14", "word": "Durable", "meaning": "내구성이 있는", "example": "The new material is very ________ and light.", "blank_answer": "durable", "source": "TOEIC Vocabulary", "difficulty": "Medium" },
+    { "id": "t15", "word": "Precaution", "meaning": "예방 조치", "example": "Take every ________ to avoid accidents.", "blank_answer": "precaution", "source": "TOEIC Part 6", "difficulty": "Medium" }
+  ],
+  "business_course": [
+    { "id": "b1", "word": "Feedback", "meaning": "피드백, 반응", "example": "Please provide your ________ on the strategy.", "blank_answer": "feedback", "source": "Daily Email", "difficulty": "Easy" },
+    { "id": "b2", "word": "Deadline", "meaning": "마감 기한", "example": "We must submit it before the ________.", "blank_answer": "deadline", "source": "Project Management", "difficulty": "Medium" },
+    { "id": "b3", "word": "Collaborate", "meaning": "협력하다", "example": "We need to ________ to achieve this goal.", "blank_answer": "collaborate", "source": "Team Meeting", "difficulty": "Medium" },
+    { "id": "b4", "word": "Agenda", "meaning": "의제, 안건", "example": "The first item on the ________ is the budget.", "blank_answer": "agenda", "source": "Meeting", "difficulty": "Easy" },
+    { "id": "b5", "word": "Negotiation", "meaning": "협상, 절충", "example": "The contract is still under ________.", "blank_answer": "negotiation", "source": "Legal & Sales", "difficulty": "Hard" },
+    { "id": "b6", "word": "Consensus", "meaning": "합의, 의견 일치", "example": "The board reached a ________ after hours of debate.", "blank_answer": "consensus", "source": "Leadership", "difficulty": "Hard" },
+    { "id": "b7", "word": "Execution", "meaning": "실행, 수행", "example": "The ________ of the plan was flawless.", "blank_answer": "execution", "source": "Project Management", "difficulty": "Medium" },
+    { "id": "b8", "word": "Strategy", "meaning": "전략", "example": "We need a new long-term ________.", "blank_answer": "strategy", "source": "Planning", "difficulty": "Easy" },
+    { "id": "b9", "word": "Leverage", "meaning": "활용하다", "example": "We can ________ our existing assets to grow.", "blank_answer": "leverage", "source": "Finance", "difficulty": "Hard" },
+    { "id": "b10", "word": "Streamline", "meaning": "간소화하다", "example": "We must ________ the production process.", "blank_answer": "streamline", "source": "Operations", "difficulty": "Hard" },
+    { "id": "b11", "word": "Venture", "meaning": "모험적인 사업", "example": "The new joint ________ was a huge success.", "blank_answer": "venture", "source": "Partnership", "difficulty": "Medium" },
+    { "id": "b12", "word": "Efficiency", "meaning": "효율성", "example": "The new software improves overall ________.", "blank_answer": "efficiency", "source": "IT", "difficulty": "Medium" },
+    { "id": "b13", "word": "Retention", "meaning": "유지, 보유", "example": "Our employee ________ rate is very high.", "blank_answer": "retention", "source": "HR", "difficulty": "Hard" },
+    { "id": "b14", "word": "Inquiry", "meaning": "문의, 조사", "example": "Thank you for your ________ about our services.", "blank_answer": "inquiry", "source": "Customer Service", "difficulty": "Easy" },
+    { "id": "b15", "word": "Objective", "meaning": "목표, 목적", "example": "Our primary ________ is to increase sales.", "blank_answer": "objective", "source": "Sales", "difficulty": "Easy" }
+  ]
+}
