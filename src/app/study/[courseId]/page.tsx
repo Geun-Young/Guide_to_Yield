@@ -3,13 +3,13 @@
 import React, { useState, use, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { 
-  ArrowLeft, ChevronLeft, ChevronRight, Eye, EyeOff, 
-  RotateCcw, Star, CheckCircle2, Trophy, Home, Send, HelpCircle
+  ArrowLeft, ChevronLeft, ChevronRight, Eye, 
+  RotateCcw, Star, Trophy, Home, Send, HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '@/components/Header';
 import wordsData from '@/data/words.json';
-import { Word, CourseData } from '@/types/word';
+import { CourseData } from '@/types/word';
 
 export default function StudyPage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = use(params);
@@ -17,7 +17,7 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
   const words = data[courseId as keyof CourseData] || [];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [userInput, setUserInput] = useState('');
+  const [userInputs, setUserInputs] = useState<string[]>([]);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hintLevel, setHintLevel] = useState(0); // 0: none, 1: first letter, 2: full answer
   const [bookmarks, setBookmarks] = useState<string[]>([]);
@@ -25,22 +25,32 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
   const [direction, setDirection] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // 로컬 스토리지 데이터 로드 (북마크 및 학습 진행도)
+  // 로컬 스토리지 데이터 로드 및 초기화
   useEffect(() => {
     const savedBookmarks = localStorage.getItem('wordflow_bookmarks');
     if (savedBookmarks) setBookmarks(JSON.parse(savedBookmarks));
 
     const savedProgress = localStorage.getItem(`wordflow_study_progress_${courseId}`);
+    let initialIndex = 0;
     if (savedProgress) {
       const index = parseInt(savedProgress, 10);
       if (index >= 0 && index < words.length) {
+        initialIndex = index;
         setCurrentIndex(index);
       }
     }
+
+    // 초기 입력창 설정
+    const currentWord = words[initialIndex];
+    if (currentWord) {
+      const wordCount = currentWord.blank_answer.split(' ').length;
+      setUserInputs(new Array(wordCount).fill(''));
+    }
+
     setIsLoaded(true);
-  }, [courseId, words.length]);
+  }, [courseId, words]);
 
   // 학습 진행도 저장
   useEffect(() => {
@@ -49,22 +59,25 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
     }
   }, [currentIndex, courseId, isLoaded]);
 
-  // 단어 바뀔 때마다 초기화
-  useEffect(() => {
-    if (!isLoaded) return;
-    setUserInput('');
-    setIsCorrect(null);
-    setHintLevel(0);
-    setTimeout(() => inputRef.current?.focus(), 100);
-  }, [currentIndex, isLoaded]);
-
   const currentWord = words[currentIndex];
+
+  // 단어 바뀔 때마다 초기화 (currentIndex 변화에 대응)
+  useEffect(() => {
+    if (!isLoaded || !currentWord) return;
+    const wordCount = currentWord.blank_answer.split(' ').length;
+    setUserInputs(new Array(wordCount).fill(''));
+    setIsCorrect(null);
+    setHintLevel(0); // 힌트 레벨 초기화
+    inputRefs.current = new Array(wordCount).fill(null);
+    setTimeout(() => inputRefs.current[0]?.focus(), 100);
+  }, [currentIndex, isLoaded, currentWord]);
 
   const handleCheck = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!currentWord) return;
 
-    const correct = userInput.trim().toLowerCase() === currentWord.blank_answer.toLowerCase();
+    const fullInput = userInputs.map(s => s.trim()).join(' ').toLowerCase();
+    const correct = fullInput === currentWord.blank_answer.toLowerCase();
     setIsCorrect(correct);
     if (correct) {
       setHintLevel(2); // 정답 맞추면 정답 상태로
@@ -77,10 +90,57 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
     }
   };
 
+  const handleInputChange = (index: number, value: string) => {
+    if (value.includes(' ')) {
+      const parts = value.split(' ');
+      const newInputs = [...userInputs];
+      newInputs[index] = parts[0];
+      setUserInputs(newInputs);
+      
+      const nextIndex = index + 1;
+      if (inputRefs.current[nextIndex]) {
+        inputRefs.current[nextIndex]?.focus();
+        if (parts[1]) {
+           handleInputChange(nextIndex, parts[1]);
+        }
+      }
+      return;
+    }
+
+    const newInputs = [...userInputs];
+    newInputs[index] = value;
+    setUserInputs(newInputs);
+    setIsCorrect(null);
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !userInputs[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+    if (e.key === 'Enter') {
+      // Enter 키의 기본 폼 제출 동작을 막아 다음 단어에서 handleCheck가 실행되는 것을 방지
+      e.preventDefault();
+      if (isCorrect === true || hintLevel === 2) {
+        handleNext();
+      } else {
+        handleCheck();
+      }
+    }
+  };
+
   const handleNext = () => {
     if (currentIndex < words.length - 1) {
       setDirection(1);
-      setCurrentIndex(currentIndex + 1);
+      // 다음 단어로 넘어가기 전에 즉시 상태 초기화
+      const nextIndex = currentIndex + 1;
+      const nextWord = words[nextIndex];
+      if (nextWord) {
+        const wordCount = nextWord.blank_answer.split(' ').length;
+        setUserInputs(new Array(wordCount).fill(''));
+      }
+      setIsCorrect(null);
+      setHintLevel(0);
+      setCurrentIndex(nextIndex);
     } else {
       setIsFinished(true);
     }
@@ -89,7 +149,16 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
   const handlePrev = () => {
     if (currentIndex > 0) {
       setDirection(-1);
-      setCurrentIndex(currentIndex - 1);
+      // 이전 단어로 돌아갈 때도 즉시 상태 초기화
+      const prevIndex = currentIndex - 1;
+      const prevWord = words[prevIndex];
+      if (prevWord) {
+        const wordCount = prevWord.blank_answer.split(' ').length;
+        setUserInputs(new Array(wordCount).fill(''));
+      }
+      setIsCorrect(null);
+      setHintLevel(0);
+      setCurrentIndex(prevIndex);
     }
   };
 
@@ -100,6 +169,7 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
   );
 
   const progress = ((currentIndex + 1) / words.length) * 100;
+  const answerWords = currentWord.blank_answer.split(' ');
 
   if (isFinished) {
     return (
@@ -161,29 +231,33 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
               <form onSubmit={handleCheck} className="w-full space-y-8 text-left">
                 <div className="rounded-2xl bg-gray-50 p-8">
                   <p className="mb-4 text-xs font-bold uppercase tracking-wider text-gray-400">Example Sentence</p>
-                  <div className="text-xl leading-relaxed text-gray-700">
+                  <div className="text-xl leading-relaxed text-gray-700 flex flex-wrap items-center gap-x-2 gap-y-4">
                     {currentWord.example.split('________').map((part, i, arr) => (
-                      <span key={i} className="flex flex-wrap items-center gap-2">
-                        {part}
+                      <React.Fragment key={i}>
+                        <span>{part}</span>
                         {i < arr.length - 1 && (
-                          <input
-                            ref={inputRef}
-                            type="text"
-                            value={userInput}
-                            onChange={(e) => {
-                              setUserInput(e.target.value);
-                              setIsCorrect(null);
-                            }}
-                            autoFocus
-                            placeholder={hintLevel === 1 ? `${currentWord.blank_answer.charAt(0)}` : "단어 입력"}
-                            className={`inline-block min-w-[140px] border-b-4 bg-transparent px-2 py-1 text-center font-bold outline-none transition-all ${
-                              isCorrect === true ? 'border-green-500 text-green-600' : 
-                              isCorrect === false ? 'border-red-400 text-red-500' : 
-                              'border-indigo-200 focus:border-primary text-primary'
-                            }`}
-                          />
+                          <div className="flex flex-wrap gap-2">
+                            {answerWords.map((word, wordIdx) => (
+                              <input
+                                key={wordIdx}
+                                ref={(el) => { inputRefs.current[wordIdx] = el; }}
+                                type="text"
+                                value={userInputs[wordIdx] || ''}
+                                onChange={(e) => handleInputChange(wordIdx, e.target.value)}
+                                onKeyDown={(e) => handleKeyDown(wordIdx, e)}
+                                autoFocus={wordIdx === 0}
+                                placeholder={hintLevel === 1 && wordIdx === 0 ? word.charAt(0) : ""}
+                                className={`inline-block border-b-4 bg-transparent px-2 py-1 text-center font-bold outline-none transition-all ${
+                                  isCorrect === true ? 'border-green-500 text-green-600' : 
+                                  isCorrect === false ? 'border-red-400 text-red-500' : 
+                                  'border-indigo-200 focus:border-primary text-primary'
+                                }`}
+                                style={{ width: `${Math.max(word.length * 1.1, 4)}rem` }}
+                              />
+                            ))}
+                          </div>
                         )}
-                      </span>
+                      </React.Fragment>
                     ))}
                   </div>
                   
@@ -197,7 +271,12 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
                       >
                         <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2 text-[10px]">Translation</p>
                         <p className="text-gray-500 font-medium leading-relaxed">
-                          {currentWord.example_meaning}
+                          {currentWord.example_meaning
+                            .replace(/\[공백\]/g, '[정답]')
+                            .replace(/\[blank\]/g, '[정답]')
+                            .replace(/\[빈칸\]/g, '[정답]')
+                            .replace(/________/g, '[정답]')
+                          }
                         </p>
                       </motion.div>
                     )}
@@ -245,7 +324,18 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
 
           {!isCorrect && hintLevel < 2 && (
             <button 
-              onClick={() => setHintLevel(prev => prev + 1)}
+              onClick={() => {
+                const nextHintLevel = hintLevel + 1;
+                setHintLevel(nextHintLevel);
+                
+                // 정답 보기(hintLevel 2)를 누른 경우 무조건 복습 리스트에 추가
+                if (nextHintLevel === 2) {
+                  const wrong = JSON.parse(localStorage.getItem('wordflow_wrong_words') || '[]');
+                  if (!wrong.includes(currentWord.id)) {
+                    localStorage.setItem('wordflow_wrong_words', JSON.stringify([...wrong, currentWord.id]));
+                  }
+                }
+              }}
               className="flex h-14 w-24 items-center justify-center gap-2 rounded-2xl bg-white text-gray-500 shadow-md hover:bg-gray-50 transition-all border border-gray-100"
               title={hintLevel === 0 ? "힌트 보기" : "정답 보기"}
             >

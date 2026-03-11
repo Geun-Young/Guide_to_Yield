@@ -1,4 +1,6 @@
-import React, { useState, use, useEffect, useMemo } from 'react';
+'use client';
+
+import React, { useState, useEffect, useMemo, use } from 'react';
 import Link from 'next/link';
 import { 
   ArrowLeft, CheckCircle2, XCircle, RotateCcw, 
@@ -175,7 +177,7 @@ export default function QuizPage({ params }: { params: Promise<{ courseId: strin
         <div className="mb-12 text-center min-h-[220px]">
           <span className="inline-block mb-4 px-4 py-1 rounded-full bg-pastel-purple text-primary text-xs font-black uppercase tracking-widest">다음 뜻에 알맞은 단어는?</span>
           <h2 className="text-5xl font-black tracking-tight text-gray-900 mb-8 leading-tight">{currentWord.meaning}</h2>
-          <div className="mx-auto w-full max-w-md rounded-2xl bg-gray-100/50 p-6 text-gray-600 italic">"{currentWord.example.replace('________', '______')}"</div>
+          <div className="mx-auto w-full max-w-md rounded-2xl bg-gray-100/50 p-6 text-gray-600 italic">&quot;{currentWord.example.replace('________', '______')}&quot;</div>
         </div>
 
         <div className="grid gap-4 mb-10">
