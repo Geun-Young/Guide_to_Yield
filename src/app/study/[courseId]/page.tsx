@@ -23,22 +23,40 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [isFinished, setIsFinished] = useState(false);
   const [direction, setDirection] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 북마크 로드
+  // 로컬 스토리지 데이터 로드 (북마크 및 학습 진행도)
   useEffect(() => {
-    const saved = localStorage.getItem('wordflow_bookmarks');
-    if (saved) setBookmarks(JSON.parse(saved));
-  }, []);
+    const savedBookmarks = localStorage.getItem('wordflow_bookmarks');
+    if (savedBookmarks) setBookmarks(JSON.parse(savedBookmarks));
+
+    const savedProgress = localStorage.getItem(`wordflow_study_progress_${courseId}`);
+    if (savedProgress) {
+      const index = parseInt(savedProgress, 10);
+      if (index >= 0 && index < words.length) {
+        setCurrentIndex(index);
+      }
+    }
+    setIsLoaded(true);
+  }, [courseId, words.length]);
+
+  // 학습 진행도 저장
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem(`wordflow_study_progress_${courseId}`, currentIndex.toString());
+    }
+  }, [currentIndex, courseId, isLoaded]);
 
   // 단어 바뀔 때마다 초기화
   useEffect(() => {
+    if (!isLoaded) return;
     setUserInput('');
     setIsCorrect(null);
     setHintLevel(0);
     setTimeout(() => inputRef.current?.focus(), 100);
-  }, [currentIndex]);
+  }, [currentIndex, isLoaded]);
 
   const currentWord = words[currentIndex];
 
@@ -75,7 +93,11 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
     }
   };
 
-  if (!currentWord) return null;
+  if (!isLoaded || !currentWord) return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="animate-pulse text-primary font-bold">로딩 중...</div>
+    </div>
+  );
 
   const progress = ((currentIndex + 1) / words.length) * 100;
 
@@ -89,7 +111,11 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
             <h2 className="mb-2 text-3xl font-extrabold text-gray-900">학습 완료!</h2>
             <p className="mb-10 text-gray-500">직접 입력하며 단어를 완벽하게 익히셨네요.</p>
             <div className="flex flex-col gap-4">
-              <button onClick={() => { setIsFinished(false); setCurrentIndex(0); }} className="flex items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white shadow-lg transition-all hover:bg-primary-dark"><RotateCcw size={20} /> 다시 학습하기</button>
+              <button onClick={() => { 
+                setIsFinished(false); 
+                setCurrentIndex(0); 
+                localStorage.setItem(`wordflow_study_progress_${courseId}`, '0');
+              }} className="flex items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white shadow-lg transition-all hover:bg-primary-dark"><RotateCcw size={20} /> 처음부터 다시 학습하기</button>
               <Link href="/" className="flex items-center justify-center gap-2 rounded-2xl bg-gray-100 py-4 font-bold text-gray-600 transition-all hover:bg-gray-200"><Home size={20} /> 홈으로 돌아가기</Link>
             </div>
           </motion.div>
@@ -149,7 +175,7 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
                               setIsCorrect(null);
                             }}
                             autoFocus
-                            placeholder={hintLevel === 1 ? `${currentWord.blank_answer.charAt(0)}...` : "단어 입력"}
+                            placeholder={hintLevel === 1 ? `${currentWord.blank_answer.charAt(0)}` : "단어 입력"}
                             className={`inline-block min-w-[140px] border-b-4 bg-transparent px-2 py-1 text-center font-bold outline-none transition-all ${
                               isCorrect === true ? 'border-green-500 text-green-600' : 
                               isCorrect === false ? 'border-red-400 text-red-500' : 
@@ -160,6 +186,22 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
                       </span>
                     ))}
                   </div>
+                  
+                  {/* 예문 해석 추가 */}
+                  <AnimatePresence>
+                    {(isCorrect === true || hintLevel === 2) && currentWord.example_meaning && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }} 
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="mt-6 pt-6 border-t border-gray-200/50"
+                      >
+                        <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2 text-[10px]">Translation</p>
+                        <p className="text-gray-500 font-medium leading-relaxed">
+                          {currentWord.example_meaning}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div className="flex items-center justify-between text-sm h-6">
@@ -170,7 +212,7 @@ export default function StudyPage({ params }: { params: Promise<{ courseId: stri
                   <AnimatePresence>
                     {hintLevel === 1 && !isCorrect && (
                       <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="font-bold text-amber-500">
-                        힌트: {currentWord.blank_answer.charAt(0)}...
+                        힌트: {currentWord.blank_answer.charAt(0)}
                       </motion.p>
                     )}
                     {hintLevel === 2 && (

@@ -5,6 +5,7 @@
       "word": "Acceptance",
       "meaning": "수락, 승인",
       "example": "We are waiting for their ________ of the offer.",
+      "example_meaning": "우리는 그들의 제안 수락을 기다리고 있습니다.",
       "blank_answer": "acceptance",
       "source": "Contract",
       "difficulty": "Easy"
@@ -14,6 +15,7 @@
       "word": "Accommodate",
       "meaning": "수용하다, 편의를 도모하다",
       "example": "The hotel can ________ up to 500 guests.",
+      "example_meaning": "그 호텔은 최대 500명의 손님을 수용할 수 있습니다.",
       "blank_answer": "accommodate",
       "source": "Service",
       "difficulty": "Medium"

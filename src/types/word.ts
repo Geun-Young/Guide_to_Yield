@@ -3,6 +3,7 @@ export interface Word {
   word: string;
   meaning: string;
   example: string;
+  example_meaning?: string;
   blank_answer: string;
   source: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
