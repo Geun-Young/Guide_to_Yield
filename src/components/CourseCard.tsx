@@ -3,7 +3,7 @@ import { ChevronRight, LucideIcon } from 'lucide-react';
 
 interface CourseCardProps {
   title: string;
-  description: string;
+  description: React.ReactNode;
   icon: LucideIcon;
   color: string;
   wordCount: number;

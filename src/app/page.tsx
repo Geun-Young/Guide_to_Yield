@@ -19,17 +19,22 @@ export default function Home() {
     {
       id: 'business_course',
       title: '직장인 실무 영어',
-      description: '비즈니스 이메일, 회의, 협상에서 바로 쓰는 핵심 표현. 글로벌 업무 역량을 강화하세요.',
+      description: (
+        <>
+          비즈니스 이메일, 회의, 협상에서 바로 쓰는 핵심 표현. <br />
+          글로벌 업무 역량을 강화하세요.
+        </>
+      ),
       icon: Briefcase,
       color: 'bg-pastel-purple',
       wordCount: 1060
     }
-  ];
+    ];
 
-  return (
+    return (
     <div className="min-h-screen bg-white">
       <Header />
-      
+
       <main className="container mx-auto px-4 pt-4 pb-16">
         {/* Main Title Image Section */}
         <section className="mb-12 text-center">
@@ -40,10 +45,12 @@ export default function Home() {
               width={600}
               height={300}
               priority
+              quality={100}
+              unoptimized
               className="w-full h-auto"
+              style={{ imageRendering: 'auto' }}
             />
-          </div>
-          
+          </div>          
           <div className="mt-6 space-y-4">
             <p className="mx-auto max-w-2xl text-lg text-gray-500 font-medium">
               유연하고 스마트한 단어 학습. <br />
